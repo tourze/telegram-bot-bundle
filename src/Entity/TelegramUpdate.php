@@ -27,7 +27,7 @@ class TelegramUpdate implements PlainArrayInterface
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = '0';
+    private ?string $id = null;
 
     #[ListColumn(title: 'TG机器人')]
     #[FormField(title: 'TG机器人')]
