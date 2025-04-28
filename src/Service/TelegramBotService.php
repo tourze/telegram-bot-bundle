@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TelegramBotBundle\Entity\TelegramBot;
-use Yiisoft\Json\Json;
 
 /**
  * Telegram Bot API 服务
@@ -82,6 +81,6 @@ class TelegramBotService
             'response' => $response->getContent(),
         ]);
 
-        return Json::decode($response->getContent());
+        return json_decode($response->getContent(), true);
     }
 }

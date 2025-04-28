@@ -17,7 +17,6 @@ use TelegramBotBundle\Event\TelegramUpdateEvent;
 use TelegramBotBundle\Repository\TelegramBotRepository;
 use TelegramBotBundle\Repository\TelegramUpdateRepository;
 use TelegramBotBundle\Service\CommandParserService;
-use Yiisoft\Json\Json;
 
 /**
  * 处理 Telegram Bot 的 Webhook 请求
@@ -44,7 +43,7 @@ class WebhookController extends AbstractController
             return new Response('Bot not found', Response::HTTP_NOT_FOUND);
         }
 
-        $rawUpdate = Json::decode($request->getContent());
+        $rawUpdate = json_decode($request->getContent(), true);
         if (!$rawUpdate) {
             return new Response('Invalid request', Response::HTTP_BAD_REQUEST);
         }
