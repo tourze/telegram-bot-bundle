@@ -3,6 +3,7 @@
 namespace TelegramBotBundle\Service;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use TelegramBotBundle\Entity\CommandLog;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
@@ -11,7 +12,6 @@ use TelegramBotBundle\Handler\CommandHandlerInterface;
 use TelegramBotBundle\Handler\InfoCommandHandler;
 use TelegramBotBundle\Repository\BotCommandRepository;
 use Tourze\DoctrineAsyncBundle\Service\DoctrineService;
-use Tourze\Symfony\AopDoctrineBundle\Attribute\Transactional;
 
 /**
  * 命令解析服务
@@ -32,14 +32,13 @@ class CommandParserService
         private readonly BotCommandRepository $commandRepository,
         private readonly DoctrineService $doctrineService,
         private readonly LoggerInterface $logger,
-        private readonly ContainerInterface $container,
+        #[Autowire(service: 'service_container')] private readonly ContainerInterface $container,
     ) {
     }
 
     /**
      * 解析并分发命令
      */
-    #[Transactional]
     public function parseAndDispatch(TelegramBot $bot, TelegramMessage $message): void
     {
         $text = $message->getText();
