@@ -10,31 +10,22 @@ use Tourze\Arrayable\PlainArrayInterface;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Field\FormField;
 
 #[ORM\Entity(repositoryClass: TelegramUpdateRepository::class)]
 #[ORM\Table(name: 'telegram_update', options: ['comment' => 'Telegram更新消息'])]
 #[ORM\Index(columns: ['bot_id', 'update_id'], name: 'telegram_update_bot_update')]
 class TelegramUpdate implements PlainArrayInterface
 {
-    #[ExportColumn]
-    #[ListColumn(order: -1, sorter: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
     private ?string $id = null;
 
-    #[ListColumn(title: 'TG机器人')]
-    #[FormField(title: 'TG机器人')]
     #[ORM\ManyToOne(targetEntity: TelegramBot::class)]
     #[ORM\JoinColumn(name: 'bot_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'TG机器人'])]
     private TelegramBot $bot;
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: Types::BIGINT, options: ['comment' => 'Telegram更新ID'])]
     private string $updateId;
 
@@ -54,8 +45,6 @@ class TelegramUpdate implements PlainArrayInterface
     private ?array $rawData = null;
 
     #[IndexColumn]
-    #[ListColumn(order: 98, sorter: true)]
-    #[ExportColumn]
     #[CreateTimeColumn]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '创建时间'])]
     private ?\DateTimeInterface $createTime = null;

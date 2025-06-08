@@ -13,65 +13,34 @@ use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
 use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
-use Tourze\EasyAdmin\Attribute\Action\Copyable;
-use Tourze\EasyAdmin\Attribute\Action\Creatable;
-use Tourze\EasyAdmin\Attribute\Action\Deletable;
-use Tourze\EasyAdmin\Attribute\Action\Editable;
-use Tourze\EasyAdmin\Attribute\Column\BoolColumn;
-use Tourze\EasyAdmin\Attribute\Column\CopyColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Field\FormField;
-use Tourze\EasyAdmin\Attribute\Filter\Filterable;
 
-#[Creatable]
-#[Editable]
-#[Deletable]
-#[Copyable]
 #[ORM\Entity(repositoryClass: BotCommandRepository::class)]
 #[ORM\Table(name: 'telegram_bot_command', options: ['comment' => 'Telegram机器人命令'])]
 #[ORM\Index(columns: ['bot_id', 'command'], name: 'telegram_bot_command_bot_command')]
 class BotCommand implements PlainArrayInterface
 {
-    #[ExportColumn]
-    #[ListColumn(order: -1, sorter: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
     private ?string $id = null;
 
-    #[CopyColumn]
-    #[ListColumn(title: 'TG机器人')]
-    #[FormField(title: 'TG机器人')]
     #[ORM\ManyToOne(targetEntity: TelegramBot::class)]
     #[ORM\JoinColumn(name: 'bot_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'TG机器人'])]
     private TelegramBot $bot;
 
-    #[CopyColumn(suffix: '-copy')]
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: Types::STRING, length: 32, options: ['comment' => '命令名称'])]
     private string $command = '';
 
-    #[CopyColumn(suffix: '-copy')]
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '命令处理器类'])]
     private string $handler = '';
 
-    #[CopyColumn]
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '命令描述'])]
     private string $description = '';
 
-    #[BoolColumn]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
-    #[ListColumn(order: 97)]
-    #[FormField(order: 97)]
     private ?bool $valid = false;
 
     #[CreatedByColumn]
@@ -82,18 +51,12 @@ class BotCommand implements PlainArrayInterface
     #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
     private ?string $updatedBy = null;
 
-    #[Filterable]
     #[IndexColumn]
-    #[ListColumn(order: 98, sorter: true)]
-    #[ExportColumn]
     #[CreateTimeColumn]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '创建时间'])]
     private ?\DateTimeInterface $createTime = null;
 
     #[UpdateTimeColumn]
-    #[ListColumn(order: 99, sorter: true)]
-    #[Filterable]
-    #[ExportColumn]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '更新时间'])]
     private ?\DateTimeInterface $updateTime = null;
 

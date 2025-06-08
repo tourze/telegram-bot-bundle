@@ -13,61 +13,35 @@ use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
 use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
-use Tourze\EasyAdmin\Attribute\Action\Creatable;
-use Tourze\EasyAdmin\Attribute\Action\Deletable;
-use Tourze\EasyAdmin\Attribute\Action\Editable;
-use Tourze\EasyAdmin\Attribute\Column\BoolColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Field\FormField;
-use Tourze\EasyAdmin\Attribute\Filter\Filterable;
-use Tourze\EasyAdmin\Attribute\Permission\AsPermission;
 
-#[AsPermission(title: 'TG机器人')]
-#[Creatable]
-#[Editable]
-#[Deletable]
 #[ORM\Entity(repositoryClass: TelegramBotRepository::class)]
 #[ORM\Table(name: 'tg_bot', options: ['comment' => 'Telegram机器人'])]
 class TelegramBot implements Arrayable, \Stringable
 {
-    #[ExportColumn]
-    #[ListColumn(order: -1, sorter: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
     #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
     private ?string $id = null;
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: 'string', length: 255, options: ['comment' => '机器人名称'])]
     private string $name = '';
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: 'string', length: 255, options: ['comment' => '机器人用户名'])]
     private string $username = '';
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(type: 'string', length: 255, options: ['comment' => '机器人Token'])]
     private string $token = '';
 
-    #[ListColumn]
     #[ORM\Column(type: 'string', length: 255, nullable: true, options: ['comment' => 'Webhook URL'])]
     private ?string $webhookUrl = null;
 
-    #[FormField]
     #[ORM\Column(type: 'text', nullable: true, options: ['comment' => '描述'])]
     private ?string $description = null;
 
-    #[BoolColumn]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
-    #[ListColumn(order: 97)]
-    #[FormField(order: 97)]
     private ?bool $valid = false;
 
     #[CreatedByColumn]
@@ -78,18 +52,12 @@ class TelegramBot implements Arrayable, \Stringable
     #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
     private ?string $updatedBy = null;
 
-    #[Filterable]
     #[IndexColumn]
-    #[ListColumn(order: 98, sorter: true)]
-    #[ExportColumn]
     #[CreateTimeColumn]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '创建时间'])]
     private ?\DateTimeInterface $createTime = null;
 
     #[UpdateTimeColumn]
-    #[ListColumn(order: 99, sorter: true)]
-    #[Filterable]
-    #[ExportColumn]
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '更新时间'])]
     private ?\DateTimeInterface $updateTime = null;
 
