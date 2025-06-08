@@ -68,14 +68,27 @@ class TelegramBotService
      */
     private function makeRequest(TelegramBot $bot, string $method, array $params = []): array
     {
-        $url = self::API_BASE_URL . $bot->getToken() . '/' . $method;
+        $this->logger->info('TG机器人API调用接口 by 机器人', [
+            'bot' => $bot,
+            'method' => $method,
+            'params' => $params,
+        ]);
+        return $this->makeHttpRequest($bot->getToken(), $method, $params);
+    }
+
+    /**
+     * 发送 API 请求
+     */
+    public function makeHttpRequest(string $token, string $method, array $params = []): array
+    {
+        $url = self::API_BASE_URL . $token . '/' . $method;
 
         $response = $this->httpClient->request('POST', $url, [
             'json' => $params,
         ]);
 
         $this->logger->info('TG机器人API调用接口', [
-            'bot' => $bot,
+            'token' => $token,
             'method' => $method,
             'params' => $params,
             'response' => $response->getContent(),
