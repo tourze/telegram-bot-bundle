@@ -11,7 +11,7 @@ use TelegramBotBundle\Entity\TelegramBot;
 use TelegramBotBundle\Handler\CommandHandlerInterface;
 use TelegramBotBundle\Handler\InfoCommandHandler;
 use TelegramBotBundle\Repository\BotCommandRepository;
-use Tourze\DoctrineAsyncInsertBundle\Service\AsyncInsertService;
+use Tourze\DoctrineAsyncInsertBundle\Service\AsyncInsertService as DoctrineService;
 
 /**
  * 命令解析服务
@@ -30,7 +30,7 @@ class CommandParserService
 
     public function __construct(
         private readonly BotCommandRepository $commandRepository,
-        private readonly AsyncInsertService $doctrineService,
+        private readonly DoctrineService $doctrineService,
         private readonly LoggerInterface $logger,
         #[Autowire(service: 'service_container')] private readonly ContainerInterface $container,
     ) {

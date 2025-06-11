@@ -10,7 +10,7 @@ class TelegramBotBundle extends Bundle implements BundleDependencyInterface
     public static function getBundleDependencies(): array
     {
         return [
-            \Tourze\DoctrineAsyncInsertBundle\DoctrineAsyncInsertBundle::class => ['all' => true],
+            \Tourze\DoctrineAsyncBundle\DoctrineAsyncBundle::class => ['all' => true],
         ];
     }
 }
