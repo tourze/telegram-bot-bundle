@@ -13,13 +13,13 @@ use TelegramBotBundle\Entity\TelegramBot;
 use TelegramBotBundle\Handler\CommandHandlerInterface;
 use TelegramBotBundle\Repository\BotCommandRepository;
 use TelegramBotBundle\Service\CommandParserService;
-use Tourze\DoctrineAsyncBundle\Service\DoctrineService;
+use Tourze\DoctrineAsyncInsertBundle\Service\AsyncInsertService;
 
 class CommandParserServiceTest extends TestCase
 {
     private CommandParserService $commandParserService;
     private MockObject|BotCommandRepository $commandRepository;
-    private MockObject|DoctrineService $doctrineService;
+    private MockObject|AsyncInsertService $doctrineService;
     private MockObject|LoggerInterface $logger;
     private MockObject|ContainerInterface $container;
     private TelegramBot $bot;
@@ -29,7 +29,7 @@ class CommandParserServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->commandRepository = $this->createMock(BotCommandRepository::class);
-        $this->doctrineService = $this->createMock(DoctrineService::class);
+        $this->doctrineService = $this->createMock(AsyncInsertService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->container = $this->createMock(ContainerInterface::class);
 
