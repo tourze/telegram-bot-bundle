@@ -8,8 +8,6 @@ use TelegramBotBundle\Repository\BotCommandRepository;
 use Tourze\Arrayable\PlainArrayInterface;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
@@ -53,10 +51,7 @@ class BotCommand implements PlainArrayInterface
     #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
     private ?string $updatedBy = null;
 
-    #[IndexColumn]
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '创建时间'])]#[UpdateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '更新时间'])]public function getId(): ?string
+    public function getId(): ?string
     {
         return $this->id;
     }
