@@ -17,7 +17,7 @@ use TelegramBotBundle\Service\TelegramBotService;
  *
  * 参考文档: https://core.telegram.org/bots/api#setwebhook
  */
-#[AsCommand(name: SetWebhookCommand::NAME, description: '设置 Telegram Bot 的 Webhook URL')]
+#[AsCommand(name: self::NAME, description: '设置 Telegram Bot 的 Webhook URL')]
 class SetWebhookCommand extends Command
 {
     public const NAME = 'telegram:set-webhook';
@@ -49,7 +49,7 @@ class SetWebhookCommand extends Command
         }
 
         $bot = $this->botRepository->find($botId);
-        if (!$bot) {
+        if ($bot === null) {
             $io->error('Bot not found');
 
             return Command::FAILURE;
