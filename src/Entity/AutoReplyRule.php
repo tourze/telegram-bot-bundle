@@ -13,7 +13,7 @@ use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
 
 #[ORM\Entity(repositoryClass: AutoReplyRuleRepository::class)]
 #[ORM\Table(name: 'tg_auto_reply_rule', options: ['comment' => 'Telegram自动回复规则'])]
-class AutoReplyRule
+class AutoReplyRule implements \Stringable
 {
     use TimestampableAware;
     #[ORM\Id]
@@ -164,4 +164,10 @@ class AutoReplyRule
     public function getUpdatedBy(): ?string
     {
         return $this->updatedBy;
-    }}
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%s #%s', 'AutoReplyRule', $this->id ?? 'new');
+    }
+}
