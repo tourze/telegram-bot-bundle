@@ -148,7 +148,7 @@ class AutoReplyRuleTest extends TestCase
 
     public function test_setAndGetCreateTime_withValidDateTime(): void
     {
-        $dateTime = new \DateTime('2023-01-01 10:00:00');
+        $dateTime = new \DateTimeImmutable('2023-01-01 10:00:00');
         $this->autoReplyRule->setCreateTime($dateTime);
         $this->assertSame($dateTime, $this->autoReplyRule->getCreateTime());
     }
@@ -161,7 +161,7 @@ class AutoReplyRuleTest extends TestCase
 
     public function test_setAndGetUpdateTime_withValidDateTime(): void
     {
-        $dateTime = new \DateTime('2023-01-01 11:00:00');
+        $dateTime = new \DateTimeImmutable('2023-01-01 11:00:00');
         $this->autoReplyRule->setUpdateTime($dateTime);
         $this->assertSame($dateTime, $this->autoReplyRule->getUpdateTime());
     }
@@ -207,4 +207,4 @@ class AutoReplyRuleTest extends TestCase
         $this->assertEquals(100, $this->autoReplyRule->getPriority());
         $this->assertTrue($this->autoReplyRule->isValid());
     }
-} 
+}

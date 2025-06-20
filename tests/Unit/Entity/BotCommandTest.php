@@ -122,7 +122,7 @@ class BotCommandTest extends TestCase
 
     public function test_setAndGetCreateTime_withValidDateTime(): void
     {
-        $dateTime = new \DateTime('2023-01-01 10:00:00');
+        $dateTime = new \DateTimeImmutable('2023-01-01 10:00:00');
         $this->botCommand->setCreateTime($dateTime);
         $this->assertSame($dateTime, $this->botCommand->getCreateTime());
     }
@@ -135,7 +135,7 @@ class BotCommandTest extends TestCase
 
     public function test_setAndGetUpdateTime_withValidDateTime(): void
     {
-        $dateTime = new \DateTime('2023-01-01 11:00:00');
+        $dateTime = new \DateTimeImmutable('2023-01-01 11:00:00');
         $this->botCommand->setUpdateTime($dateTime);
         $this->assertSame($dateTime, $this->botCommand->getUpdateTime());
     }
@@ -165,10 +165,10 @@ class BotCommandTest extends TestCase
         $this->bot->setName('Test Bot');
         $this->bot->setUsername('test_bot');
         $this->bot->setToken('test_token');
-        
-        $createTime = new \DateTime('2023-01-01 10:00:00');
-        $updateTime = new \DateTime('2023-01-01 11:00:00');
-        
+
+        $createTime = new \DateTimeImmutable('2023-01-01 10:00:00');
+        $updateTime = new \DateTimeImmutable('2023-01-01 11:00:00');
+
         $this->botCommand->setBot($this->bot)
             ->setCommand('start')
             ->setHandler('App\\Handler\\StartCommandHandler')
@@ -176,7 +176,7 @@ class BotCommandTest extends TestCase
             ->setValid(true)
             ->setCreatedBy('admin')
             ->setUpdatedBy('editor');
-        
+
         $this->botCommand->setCreateTime($createTime);
         $this->botCommand->setUpdateTime($updateTime);
 
@@ -244,4 +244,4 @@ class BotCommandTest extends TestCase
         $this->assertEquals('Show help', $this->botCommand->getDescription());
         $this->assertTrue($this->botCommand->isValid());
     }
-} 
+}
