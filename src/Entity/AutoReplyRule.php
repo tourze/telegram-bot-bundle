@@ -8,14 +8,15 @@ use TelegramBotBundle\Repository\AutoReplyRuleRepository;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
 #[ORM\Entity(repositoryClass: AutoReplyRuleRepository::class)]
 #[ORM\Table(name: 'tg_auto_reply_rule', options: ['comment' => 'Telegram自动回复规则'])]
 class AutoReplyRule implements \Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
@@ -25,19 +26,19 @@ class AutoReplyRule implements \Stringable
     #[ORM\JoinColumn(nullable: false)]
     private TelegramBot $bot;
 
-    #[ORM\Column(type: 'string', length: 255, options: ['comment' => '规则名称'])]
+    #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '规则名称'])]
     private string $name = '';
 
-    #[ORM\Column(type: 'string', length: 255, options: ['comment' => '匹配关键词'])]
+    #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '匹配关键词'])]
     private string $keyword = '';
 
-    #[ORM\Column(type: 'text', options: ['comment' => '回复内容'])]
+    #[ORM\Column(type: Types::TEXT, options: ['comment' => '回复内容'])]
     private string $replyContent = '';
 
-    #[ORM\Column(type: 'boolean', options: ['comment' => '是否精确匹配', 'default' => false])]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['comment' => '是否精确匹配', 'default' => false])]
     private bool $exactMatch = false;
 
-    #[ORM\Column(type: 'integer', options: ['comment' => '优先级', 'default' => 0])]
+    #[ORM\Column(type: Types::INTEGER, options: ['comment' => '优先级', 'default' => 0])]
     private int $priority = 0;
 
     #[IndexColumn]
@@ -45,13 +46,6 @@ class AutoReplyRule implements \Stringable
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
     private ?bool $valid = false;
 
-    #[CreatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '创建人'])]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
-    private ?string $updatedBy = null;
 
     public function getId(): ?int
     {
@@ -142,29 +136,6 @@ class AutoReplyRule implements \Stringable
         return $this;
     }
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }
 
     public function __toString(): string
     {

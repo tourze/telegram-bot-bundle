@@ -106,7 +106,7 @@ class WebhookControllerTest extends TestCase
             ->method('parseAndDispatch')
             ->with($bot, $this->isInstanceOf(TelegramMessage::class));
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getContent());
@@ -122,7 +122,7 @@ class WebhookControllerTest extends TestCase
             ->with(['id' => $botId, 'valid' => true])
             ->willReturn(null);
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('Bot not found', $response->getContent());
@@ -141,7 +141,7 @@ class WebhookControllerTest extends TestCase
             ->with(['id' => $botId, 'valid' => true])
             ->willReturn($bot);
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('Invalid request', $response->getContent());
@@ -180,7 +180,7 @@ class WebhookControllerTest extends TestCase
         $this->entityManager->expects($this->never())
             ->method('persist');
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getContent());
@@ -214,7 +214,7 @@ class WebhookControllerTest extends TestCase
         $this->entityManager->expects($this->once())
             ->method('persist');
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -253,7 +253,7 @@ class WebhookControllerTest extends TestCase
                     && $update->getEditedMessage()->getText() === 'Edited message';
             }));
 
-        $response = $this->webhookController->webhook($botId, $request);
+        $response = $this->webhookController->__invoke($botId, $request);
 
         $this->assertEquals(200, $response->getStatusCode());
     }

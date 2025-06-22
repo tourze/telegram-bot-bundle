@@ -7,15 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
 use TelegramBotBundle\Repository\TelegramUpdateRepository;
 use Tourze\Arrayable\PlainArrayInterface;
-use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
+use Tourze\DoctrineTimestampBundle\Traits\CreateTimeAware;
 
 #[ORM\Entity(repositoryClass: TelegramUpdateRepository::class)]
 #[ORM\Table(name: 'telegram_update', options: ['comment' => 'Telegram更新消息'])]
 #[ORM\Index(columns: ['bot_id', 'update_id'], name: 'telegram_update_bot_update')]
-class TelegramUpdate implements PlainArrayInterface
+class TelegramUpdate implements PlainArrayInterface, \Stringable
 {
+    use CreateTimeAware;
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -44,10 +44,6 @@ class TelegramUpdate implements PlainArrayInterface
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '原始数据'])]
     private ?array $rawData = null;
 
-    #[IndexColumn]
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '创建时间'])]
-    private ?\DateTimeImmutable $createTime = null;
 
     public function getId(): ?string
     {
@@ -138,17 +134,6 @@ class TelegramUpdate implements PlainArrayInterface
         return $this;
     }
 
-    public function setCreateTime(?\DateTimeImmutable $createdAt): self
-    {
-        $this->createTime = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreateTime(): ?\DateTimeImmutableImmutable
-    {
-        return $this->createTime;
-    }
 
     public function retrievePlainArray(): array
     {
@@ -165,6 +150,12 @@ class TelegramUpdate implements PlainArrayInterface
             'editedMessage' => $this->getEditedMessage()?->toArray(),
             'channelPost' => $this->getChannelPost()?->toArray(),
             'editedChannelPost' => $this->getEditedChannelPost()?->toArray(),
+            'createTime' => $this->getCreateTime()?->format('Y-m-d H:i:s'),
         ];
+    }
+    
+    public function __toString(): string
+    {
+        return sprintf('TelegramUpdate #%s (Update ID: %s)', $this->id ?? 'new', $this->updateId ?? 'n/a');
     }
 }

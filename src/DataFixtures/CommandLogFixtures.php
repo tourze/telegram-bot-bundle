@@ -28,7 +28,7 @@ class CommandLogFixtures extends Fixture implements DependentFixtureInterface
         $startLog->setUsername('demo_user');
         $startLog->setChatId(123456789);
         $startLog->setChatType('private');
-        $startLog->setCreateTime(new \DateTime('2023-01-01 10:00:00'));
+        $startLog->setCreateTime(new \DateTimeImmutable('2023-01-01 10:00:00'));
 
         $manager->persist($startLog);
 
@@ -42,7 +42,7 @@ class CommandLogFixtures extends Fixture implements DependentFixtureInterface
         $helpLog->setUsername('demo_user');
         $helpLog->setChatId(123456789);
         $helpLog->setChatType('private');
-        $helpLog->setCreateTime(new \DateTime('2023-01-01 10:05:00'));
+        $helpLog->setCreateTime(new \DateTimeImmutable('2023-01-01 10:05:00'));
 
         $manager->persist($helpLog);
 
@@ -56,7 +56,7 @@ class CommandLogFixtures extends Fixture implements DependentFixtureInterface
         $systemLog->setUsername(null);
         $systemLog->setChatId(null);
         $systemLog->setChatType(null);
-        $systemLog->setCreateTime(new \DateTime('2023-01-01 09:00:00'));
+        $systemLog->setCreateTime(new \DateTimeImmutable('2023-01-01 09:00:00'));
 
         $manager->persist($systemLog);
 

@@ -29,12 +29,12 @@ class AutoReplySubscriber implements EventSubscriberInterface
     public function onTelegramUpdate(TelegramUpdateEvent $event): void
     {
         $messageText = $event->getMessageText();
-        if (!$messageText) {
+        if (null === $messageText || '' === trim($messageText)) {
             return;
         }
 
         $chatId = $event->getChatId();
-        if (!$chatId) {
+        if (null === $chatId) {
             return;
         }
 

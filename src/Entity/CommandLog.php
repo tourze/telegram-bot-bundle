@@ -6,14 +6,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use TelegramBotBundle\Repository\CommandLogRepository;
 use Tourze\Arrayable\PlainArrayInterface;
-use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
+use Tourze\DoctrineTimestampBundle\Traits\CreateTimeAware;
 
 #[ORM\Entity(repositoryClass: CommandLogRepository::class)]
 #[ORM\Table(name: 'telegram_command_log', options: ['comment' => 'Telegram命令执行日志'])]
 #[ORM\Index(columns: ['bot_id', 'command', 'create_time'], name: 'telegram_command_log_bot_command_time')]
-class CommandLog implements PlainArrayInterface
+class CommandLog implements PlainArrayInterface, \Stringable
 {
+    use CreateTimeAware;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
@@ -44,10 +44,6 @@ class CommandLog implements PlainArrayInterface
     #[ORM\Column(type: Types::STRING, length: 32, nullable: true, options: ['comment' => '聊天类型'])]
     private ?string $chatType = null;
 
-    #[IndexColumn]
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '创建时间'])]
-    private ?\DateTimeImmutable $createTime = null;
 
     public function getId(): ?int
     {
@@ -150,17 +146,6 @@ class CommandLog implements PlainArrayInterface
         return $this;
     }
 
-    public function setCreateTime(?\DateTimeImmutable $createdAt): self
-    {
-        $this->createTime = $createdAt;
-
-        return $this;
-    }
-
-    public function getCreateTime(): ?\DateTimeImmutableImmutable
-    {
-        return $this->createTime;
-    }
 
     public function retrievePlainArray(): array
     {
@@ -179,6 +164,12 @@ class CommandLog implements PlainArrayInterface
             'username' => $this->getUsername(),
             'chatId' => $this->getChatId(),
             'chatType' => $this->getChatType(),
+            'createTime' => $this->getCreateTime()?->format('Y-m-d H:i:s'),
         ];
+    }
+    
+    public function __toString(): string
+    {
+        return sprintf('CommandLog #%s: %s', $this->id ?? 'new', $this->command ?: 'no-command');
     }
 }

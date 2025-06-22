@@ -10,15 +10,16 @@ use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
-use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
 #[ORM\Entity(repositoryClass: BotCommandRepository::class)]
 #[ORM\Table(name: 'telegram_bot_command', options: ['comment' => 'Telegram机器人命令'])]
 #[ORM\Index(columns: ['bot_id', 'command'], name: 'telegram_bot_command_bot_command')]
-class BotCommand implements PlainArrayInterface
+class BotCommand implements PlainArrayInterface, \Stringable
 {
     use TimestampableAware;
+    use BlameableAware;
+    
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
@@ -43,13 +44,6 @@ class BotCommand implements PlainArrayInterface
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
     private ?bool $valid = false;
 
-    #[CreatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '创建人'])]
-    private ?string $createdBy = null;
-
-    #[UpdatedByColumn]
-    #[ORM\Column(nullable: true, options: ['comment' => '更新人'])]
-    private ?string $updatedBy = null;
 
     public function getId(): ?string
     {
@@ -116,29 +110,7 @@ class BotCommand implements PlainArrayInterface
         return $this;
     }
 
-    public function setCreatedBy(?string $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    public function getCreatedBy(): ?string
-    {
-        return $this->createdBy;
-    }
-
-    public function setUpdatedBy(?string $updatedBy): self
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    public function getUpdatedBy(): ?string
-    {
-        return $this->updatedBy;
-    }public function retrievePlainArray(): array
+    public function retrievePlainArray(): array
     {
         return $this->toArray();
     }
@@ -157,5 +129,10 @@ class BotCommand implements PlainArrayInterface
             'createdBy' => $this->getCreatedBy(),
             'updatedBy' => $this->getUpdatedBy(),
         ];
+    }
+    
+    public function __toString(): string
+    {
+        return sprintf('%s #%s', $this->command ?: 'BotCommand', $this->id ?? 'new');
     }
 }

@@ -63,8 +63,6 @@ class TelegramBotTest extends TestCase
         $this->bot->setToken('test_token');
 
         $array = $this->bot->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('name', $array);
         $this->assertArrayHasKey('username', $array);
         $this->assertArrayHasKey('token', $array);

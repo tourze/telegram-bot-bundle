@@ -174,8 +174,6 @@ class TelegramChatTest extends TestCase
             ->setLastName('Doe');
 
         $array = $this->chat->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('id', $array);
         $this->assertArrayHasKey('type', $array);
         $this->assertArrayHasKey('title', $array);
@@ -194,8 +192,6 @@ class TelegramChatTest extends TestCase
     public function test_toArray_withMinimalData(): void
     {
         $array = $this->chat->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('id', $array);
         $this->assertArrayHasKey('type', $array);
         $this->assertArrayHasKey('title', $array);

@@ -170,8 +170,6 @@ class TelegramUserTest extends TestCase
             ->setLanguageCode('en');
 
         $array = $this->user->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('id', $array);
         $this->assertArrayHasKey('isBot', $array);
         $this->assertArrayHasKey('firstName', $array);
@@ -207,8 +205,6 @@ class TelegramUserTest extends TestCase
     public function test_toArray_withMinimalData(): void
     {
         $array = $this->user->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('id', $array);
         $this->assertArrayHasKey('isBot', $array);
         $this->assertArrayHasKey('firstName', $array);

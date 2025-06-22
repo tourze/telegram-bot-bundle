@@ -42,7 +42,7 @@ class CommandParserService
     public function parseAndDispatch(TelegramBot $bot, TelegramMessage $message): void
     {
         $text = $message->getText();
-        if (!$text || !str_starts_with($text, '/')) {
+        if (null === $text || '' === trim($text) || !str_starts_with($text, '/')) {
             return;
         }
 
@@ -77,7 +77,7 @@ class CommandParserService
 
         // 检查命令是否存在且有效
         $command = $this->commandRepository->findCommand($bot, $commandText);
-        if (!$command) {
+        if (null === $command) {
             $this->logger->info('未知的命令', [
                 'bot' => $bot->getId(),
                 'command' => $commandText,
@@ -113,12 +113,14 @@ class CommandParserService
             ->setArgs($args)
             ->setIsSystem($isSystem);
 
-        if ($from = $message->getFrom()) {
+        $from = $message->getFrom();
+        if (null !== $from) {
             $log->setUserId($from->getId())
                 ->setUsername($from->getUsername());
         }
 
-        if ($chat = $message->getChat()) {
+        $chat = $message->getChat();
+        if (null !== $chat) {
             $log->setChatId($chat->getId())
                 ->setChatType($chat->getType());
         }

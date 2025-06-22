@@ -34,7 +34,7 @@ class InfoCommandHandlerTest extends TestCase
         $this->bot = new TelegramBot();
 
         $this->chat = new TelegramChat();
-        $this->chat->setId('456');
+        $this->chat->setId(456);
 
         $this->message = new TelegramMessage();
         $this->message->setChat($this->chat);
@@ -64,7 +64,7 @@ class InfoCommandHandlerTest extends TestCase
 
         $this->botService->expects($this->once())
             ->method('sendMessage')
-            ->with($this->bot, '456', $expectedResponse)
+            ->with($this->bot, 456, $expectedResponse)
             ->willReturn(true);
 
         $this->infoCommandHandler->handle($this->bot, 'info', [], $this->message);
@@ -82,7 +82,7 @@ class InfoCommandHandlerTest extends TestCase
 
         $this->botService->expects($this->once())
             ->method('sendMessage')
-            ->with($this->bot, '456', $expectedResponse)
+            ->with($this->bot, 456, $expectedResponse)
             ->willReturn(true);
 
         $this->infoCommandHandler->handle($this->bot, 'info', [], $this->message);

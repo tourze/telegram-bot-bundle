@@ -36,15 +36,15 @@ class WebhookController extends AbstractController
     }
 
     #[Route('/telegram/webhook/{id}', name: 'telegram_bot_webhook', methods: ['POST'])]
-    public function webhook(string $id, Request $request): Response
+    public function __invoke(string $id, Request $request): Response
     {
         $bot = $this->botRepository->findOneBy(['id' => $id, 'valid' => true]);
-        if (!$bot) {
+        if (null === $bot) {
             return new Response('Bot not found', Response::HTTP_NOT_FOUND);
         }
 
         $rawUpdate = json_decode($request->getContent(), true);
-        if (!$rawUpdate) {
+        if (false === $rawUpdate || null === $rawUpdate) {
             return new Response('Invalid request', Response::HTTP_BAD_REQUEST);
         }
         $this->logger->info('收到TG WebHook回调', [
@@ -54,7 +54,7 @@ class WebhookController extends AbstractController
 
         // 检查是否已经处理过这个更新
         $existingUpdate = $this->updateRepository->findByBotAndUpdateId($bot, (string) $rawUpdate['update_id']);
-        if ($existingUpdate) {
+        if (null !== $existingUpdate) {
             return new Response('OK');
         }
 
@@ -89,7 +89,8 @@ class WebhookController extends AbstractController
         $this->entityManager->flush();
 
         // 如果是消息，尝试解析命令
-        if ($message = $update->getMessage()) {
+        $message = $update->getMessage();
+        if (null !== $message) {
             $this->commandParser->parseAndDispatch($bot, $message);
         }
 

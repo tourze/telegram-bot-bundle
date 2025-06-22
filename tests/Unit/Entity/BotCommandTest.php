@@ -181,8 +181,6 @@ class BotCommandTest extends TestCase
         $this->botCommand->setUpdateTime($updateTime);
 
         $array = $this->botCommand->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('id', $array);
         $this->assertArrayHasKey('bot', $array);
         $this->assertArrayHasKey('command', $array);
@@ -208,8 +206,6 @@ class BotCommandTest extends TestCase
     {
         $this->botCommand->setBot($this->bot);
         $array = $this->botCommand->toArray();
-
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('createTime', $array);
         $this->assertArrayHasKey('updateTime', $array);
         $this->assertArrayHasKey('createdBy', $array);

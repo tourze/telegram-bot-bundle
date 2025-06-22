@@ -27,7 +27,7 @@ class InfoCommandHandler implements CommandHandlerInterface
         $response .= "/info - 显示所有可用的命令\n";
 
         // 再显示配置的命令
-        if ($commands) {
+        if (count($commands) > 0) {
             foreach ($commands as $_command) {
                 $response .= sprintf("/%s - %s\n", $_command->getCommand(), $_command->getDescription());
             }

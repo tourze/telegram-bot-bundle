@@ -19,8 +19,8 @@ class TelegramMessageTest extends TestCase
     public function testGetterAndSetter(): void
     {
         // 测试MessageId设置和获取
-        $this->message->setMessageId('123');
-        $this->assertEquals('123', $this->message->getMessageId());
+        $this->message->setMessageId(123);
+        $this->assertEquals(123, $this->message->getMessageId());
 
         // 测试Date设置和获取
         $this->message->setDate(1609459200);
@@ -32,20 +32,20 @@ class TelegramMessageTest extends TestCase
 
         // 测试From设置和获取
         $user = new TelegramUser();
-        $user->setId('456');
+        $user->setId(456);
         $user->setUsername('test_user');
         $this->message->setFrom($user);
         $this->assertSame($user, $this->message->getFrom());
-        $this->assertEquals('456', $this->message->getFrom()->getId());
+        $this->assertEquals(456, $this->message->getFrom()->getId());
         $this->assertEquals('test_user', $this->message->getFrom()->getUsername());
 
         // 测试Chat设置和获取
         $chat = new TelegramChat();
-        $chat->setId('789');
+        $chat->setId(789);
         $chat->setType('private');
         $this->message->setChat($chat);
         $this->assertSame($chat, $this->message->getChat());
-        $this->assertEquals('789', $this->message->getChat()->getId());
+        $this->assertEquals(789, $this->message->getChat()->getId());
         $this->assertEquals('private', $this->message->getChat()->getType());
     }
 

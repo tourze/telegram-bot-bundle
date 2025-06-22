@@ -68,7 +68,7 @@ class TelegramUpdateFixtures extends Fixture implements DependentFixtureInterfac
             ],
         ]);
 
-        $textUpdate->setCreateTime(new \DateTime('2023-01-01 10:00:00'));
+        $textUpdate->setCreateTime(new \DateTimeImmutable('2023-01-01 10:00:00'));
 
         $manager->persist($textUpdate);
 
@@ -119,7 +119,7 @@ class TelegramUpdateFixtures extends Fixture implements DependentFixtureInterfac
             ],
         ]);
 
-        $commandUpdate->setCreateTime(new \DateTime('2023-01-01 10:01:00'));
+        $commandUpdate->setCreateTime(new \DateTimeImmutable('2023-01-01 10:01:00'));
 
         $manager->persist($commandUpdate);
 
