@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
 use TelegramBotBundle\Repository\TelegramUpdateRepository;
 use Tourze\Arrayable\PlainArrayInterface;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\CreateTimeAware;
 
 #[ORM\Entity(repositoryClass: TelegramUpdateRepository::class)]
@@ -15,12 +15,8 @@ use Tourze\DoctrineTimestampBundle\Traits\CreateTimeAware;
 #[ORM\Index(columns: ['bot_id', 'update_id'], name: 'telegram_update_bot_update')]
 class TelegramUpdate implements PlainArrayInterface, \Stringable
 {
+    use SnowflakeKeyAware;
     use CreateTimeAware;
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\ManyToOne(targetEntity: TelegramBot::class)]
     #[ORM\JoinColumn(name: 'bot_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'TG机器人'])]
@@ -45,10 +41,6 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
     private ?array $rawData = null;
 
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getBot(): TelegramBot
     {

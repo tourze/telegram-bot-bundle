@@ -35,7 +35,7 @@ class WebhookController extends AbstractController
     ) {
     }
 
-    #[Route('/telegram/webhook/{id}', name: 'telegram_bot_webhook', methods: ['POST'])]
+    #[Route(path: '/telegram/webhook/{id}', name: 'telegram_bot_webhook', methods: ['POST'])]
     public function __invoke(string $id, Request $request): Response
     {
         $bot = $this->botRepository->findOneBy(['id' => $id, 'valid' => true]);

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TelegramBotBundle\Repository\TelegramBotRepository;
 use Tourze\Arrayable\Arrayable;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
@@ -16,14 +16,9 @@ use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 #[ORM\Table(name: 'tg_bot', options: ['comment' => 'Telegram机器人'])]
 class TelegramBot implements Arrayable, \Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
     use BlameableAware;
-    
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, options: ['comment' => '机器人名称'])]
     private string $name = '';
@@ -55,10 +50,6 @@ class TelegramBot implements Arrayable, \Stringable
         return $this->getName();
     }
 
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getName(): string
     {

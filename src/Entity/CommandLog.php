@@ -170,6 +170,6 @@ class CommandLog implements PlainArrayInterface, \Stringable
     
     public function __toString(): string
     {
-        return sprintf('CommandLog #%s: %s', $this->id ?? 'new', $this->command ?: 'no-command');
+        return sprintf('CommandLog #%s: %s', $this->id ?? 'new', $this->command !== '' ? $this->command : 'no-command');
     }
 }

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TelegramBotBundle\Repository\BotCommandRepository;
 use Tourze\Arrayable\PlainArrayInterface;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
-use Tourze\DoctrineSnowflakeBundle\Service\SnowflakeIdGenerator;
+use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
@@ -17,14 +17,9 @@ use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 #[ORM\Index(columns: ['bot_id', 'command'], name: 'telegram_bot_command_bot_command')]
 class BotCommand implements PlainArrayInterface, \Stringable
 {
+    use SnowflakeKeyAware;
     use TimestampableAware;
     use BlameableAware;
-    
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(SnowflakeIdGenerator::class)]
-    #[ORM\Column(type: Types::BIGINT, nullable: false, options: ['comment' => 'ID'])]
-    private ?string $id = null;
 
     #[ORM\ManyToOne(targetEntity: TelegramBot::class)]
     #[ORM\JoinColumn(name: 'bot_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'TG机器人'])]
@@ -44,11 +39,6 @@ class BotCommand implements PlainArrayInterface, \Stringable
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
     private ?bool $valid = false;
 
-
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
 
     public function getBot(): TelegramBot
     {
@@ -133,6 +123,6 @@ class BotCommand implements PlainArrayInterface, \Stringable
     
     public function __toString(): string
     {
-        return sprintf('%s #%s', $this->command ?: 'BotCommand', $this->id ?? 'new');
+        return sprintf('%s #%s', $this->command !== '' ? $this->command : 'BotCommand', $this->id ?? 'new');
     }
 }
