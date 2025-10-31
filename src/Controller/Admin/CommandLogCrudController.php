@@ -2,6 +2,7 @@
 
 namespace TelegramBotBundle\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -15,7 +16,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use TelegramBotBundle\Entity\CommandLog;
 
-class CommandLogCrudController extends AbstractCrudController
+/**
+ * @extends AbstractCrudController<CommandLog>
+ */
+#[AdminCrud(routePath: '/telegram-bot/command-log', routeName: 'telegram_bot_command_log')]
+final class CommandLogCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -30,18 +35,20 @@ class CommandLogCrudController extends AbstractCrudController
             ->setPageTitle('index', '命令日志列表')
             ->setPageTitle('detail', '命令日志详情')
             ->setDefaultSort(['id' => 'DESC'])
-            ->setSearchFields(['id', 'command', 'username', 'chatType']);
+            ->setSearchFields(['id', 'command', 'username', 'chatType'])
+        ;
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')
-            ->setMaxLength(9999);
+        yield IdField::new('id', 'ID')
+            ->setMaxLength(9999)
+        ;
         yield AssociationField::new('bot', 'TG机器人');
         yield TextField::new('command', '命令名称');
-//        yield CodeEditorField::new('args', '命令参数')
-//            ->setLanguage('json')
-//            ->hideOnIndex();
+        //        yield CodeEditorField::new('args', '命令参数')
+        //            ->setLanguage('json')
+        //            ->hideOnIndex();
         yield BooleanField::new('isSystem', '系统命令');
         yield NumberField::new('userId', '用户ID');
         yield TextField::new('username', '用户名');
@@ -55,7 +62,7 @@ class CommandLogCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->disable(Crud::PAGE_NEW, Crud::PAGE_EDIT)
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::DELETE]);
+        ;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -66,6 +73,7 @@ class CommandLogCrudController extends AbstractCrudController
             ->add('isSystem')
             ->add('username')
             ->add('chatType')
-            ->add('createTime');
+            ->add('createTime')
+        ;
     }
 }

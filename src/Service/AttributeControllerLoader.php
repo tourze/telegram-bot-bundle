@@ -34,7 +34,7 @@ class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInter
     {
         $collection = new RouteCollection();
         $collection->addCollection($this->controllerLoader->load(WebhookController::class));
-        
+
         return $collection;
     }
 }

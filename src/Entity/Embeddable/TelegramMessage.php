@@ -6,6 +6,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\PlainArrayInterface;
 
+/**
+ * @implements PlainArrayInterface<string, mixed>
+ */
 #[ORM\Embeddable]
 class TelegramMessage implements PlainArrayInterface
 {
@@ -29,11 +32,9 @@ class TelegramMessage implements PlainArrayInterface
         return $this->messageId;
     }
 
-    public function setMessageId(?int $messageId): self
+    public function setMessageId(?int $messageId): void
     {
         $this->messageId = $messageId;
-
-        return $this;
     }
 
     public function getFrom(): ?TelegramUser
@@ -41,11 +42,9 @@ class TelegramMessage implements PlainArrayInterface
         return $this->from;
     }
 
-    public function setFrom(?TelegramUser $from): self
+    public function setFrom(?TelegramUser $from): void
     {
         $this->from = $from;
-
-        return $this;
     }
 
     public function getDate(): ?int
@@ -53,11 +52,9 @@ class TelegramMessage implements PlainArrayInterface
         return $this->date;
     }
 
-    public function setDate(?int $date): self
+    public function setDate(?int $date): void
     {
         $this->date = $date;
-
-        return $this;
     }
 
     public function getChat(): ?TelegramChat
@@ -65,11 +62,9 @@ class TelegramMessage implements PlainArrayInterface
         return $this->chat;
     }
 
-    public function setChat(?TelegramChat $chat): self
+    public function setChat(?TelegramChat $chat): void
     {
         $this->chat = $chat;
-
-        return $this;
     }
 
     public function getText(): ?string
@@ -77,18 +72,22 @@ class TelegramMessage implements PlainArrayInterface
         return $this->text;
     }
 
-    public function setText(?string $text): self
+    public function setText(?string $text): void
     {
         $this->text = $text;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function retrievePlainArray(): array
     {
         return $this->toArray();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

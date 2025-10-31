@@ -4,16 +4,18 @@ namespace TelegramBotBundle\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use TelegramBotBundle\Entity\TelegramBot;
 
 /**
  * Telegram机器人数据填充
  */
+#[When(env: 'test')]
 class TelegramBotFixtures extends Fixture
 {
     // 定义引用常量
-    public const DEMO_BOT_REFERENCE = 'telegram-bot-demo';
-    public const TEST_BOT_REFERENCE = 'telegram-bot-test';
+    public const DEMO_BOT_REFERENCE = 'demo-bot';
+    public const TEST_BOT_REFERENCE = 'test-bot';
 
     public function load(ObjectManager $manager): void
     {
@@ -22,7 +24,7 @@ class TelegramBotFixtures extends Fixture
         $demoBot->setName('演示机器人');
         $demoBot->setUsername('demo_bot');
         $demoBot->setToken('demo_bot_token_12345');
-        $demoBot->setWebhookUrl('https://example.com/webhook/demo');
+        $demoBot->setWebhookUrl('https://images.unsplash.com/photo-webhook/demo');
         $demoBot->setDescription('用于演示的Telegram机器人');
         $demoBot->setValid(true);
 
@@ -33,7 +35,7 @@ class TelegramBotFixtures extends Fixture
         $testBot->setName('测试机器人');
         $testBot->setUsername('test_bot');
         $testBot->setToken('test_bot_token_67890');
-        $testBot->setWebhookUrl('https://example.com/webhook/test');
+        $testBot->setWebhookUrl('https://images.unsplash.com/photo-webhook/test');
         $testBot->setDescription('用于测试的Telegram机器人');
         $testBot->setValid(true);
 

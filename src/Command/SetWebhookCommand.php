@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use TelegramBotBundle\Repository\TelegramBotRepository;
 use TelegramBotBundle\Service\TelegramBotService;
@@ -18,6 +19,7 @@ use TelegramBotBundle\Service\TelegramBotService;
  * 参考文档: https://core.telegram.org/bots/api#setwebhook
  */
 #[AsCommand(name: self::NAME, description: '设置 Telegram Bot 的 Webhook URL')]
+#[Autoconfigure(public: true)]
 class SetWebhookCommand extends Command
 {
     public const NAME = 'telegram:set-webhook';
@@ -34,7 +36,8 @@ class SetWebhookCommand extends Command
     {
         $this
             ->addArgument('bot-id', InputOption::VALUE_REQUIRED, '机器人ID')
-            ->addArgument('base-url', InputOption::VALUE_REQUIRED, '基础URL');
+            ->addArgument('base-url', InputOption::VALUE_REQUIRED, '基础URL')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -42,14 +45,14 @@ class SetWebhookCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $botId = $input->getArgument('bot-id');
         $baseUrl = $input->getArgument('base-url');
-        if (empty($baseUrl)) {
+        if (null === $baseUrl || '' === $baseUrl) {
             $io->error('基础URL不能为空');
 
             return Command::FAILURE;
         }
 
         $bot = $this->botRepository->find($botId);
-        if ($bot === null) {
+        if (null === $bot) {
             $io->error('Bot not found');
 
             return Command::FAILURE;

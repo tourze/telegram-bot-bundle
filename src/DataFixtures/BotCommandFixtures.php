@@ -5,17 +5,19 @@ namespace TelegramBotBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use TelegramBotBundle\Entity\BotCommand;
 use TelegramBotBundle\Entity\TelegramBot;
 
 /**
  * Telegram机器人命令数据填充
  */
+#[When(env: 'test')]
 class BotCommandFixtures extends Fixture implements DependentFixtureInterface
 {
     // 定义引用常量
-    public const START_COMMAND_REFERENCE = 'command-start';
-    public const HELP_COMMAND_REFERENCE = 'command-help';
+    public const START_COMMAND_REFERENCE = 'start-command';
+    public const HELP_COMMAND_REFERENCE = 'help-command';
 
     public function load(ObjectManager $manager): void
     {

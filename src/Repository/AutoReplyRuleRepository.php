@@ -5,13 +5,12 @@ namespace TelegramBotBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use TelegramBotBundle\Entity\AutoReplyRule;
+use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
 
 /**
- * @method AutoReplyRule|null find($id, $lockMode = null, $lockVersion = null)
- * @method AutoReplyRule|null findOneBy(array $criteria, array $orderBy = null)
- * @method AutoReplyRule[]    findAll()
- * @method AutoReplyRule[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends ServiceEntityRepository<AutoReplyRule>
  */
+#[AsRepository(entityClass: AutoReplyRule::class)]
 class AutoReplyRuleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -31,8 +30,25 @@ class AutoReplyRuleRepository extends ServiceEntityRepository
             ->andWhere('r.valid = true')
             ->setParameter('botId', $botId)
             ->orderBy('r.priority', 'DESC')
-            ->addOrderBy('r.id', 'ASC');
+            ->addOrderBy('r.id', 'ASC')
+        ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function save(AutoReplyRule $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(AutoReplyRule $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }

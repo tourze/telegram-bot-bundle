@@ -2,6 +2,7 @@
 
 namespace TelegramBotBundle\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -14,7 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use TelegramBotBundle\Entity\BotCommand;
 
-class BotCommandCrudController extends AbstractCrudController
+/**
+ * @extends AbstractCrudController<BotCommand>
+ */
+#[AdminCrud(routePath: '/telegram-bot/bot-command', routeName: 'telegram_bot_bot_command')]
+final class BotCommandCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -31,34 +36,40 @@ class BotCommandCrudController extends AbstractCrudController
             ->setPageTitle('edit', '编辑机器人命令')
             ->setPageTitle('detail', '机器人命令详情')
             ->setDefaultSort(['id' => 'DESC'])
-            ->setSearchFields(['id', 'command', 'handler', 'description']);
+            ->setSearchFields(['id', 'command', 'handler', 'description'])
+        ;
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')
+        yield IdField::new('id', 'ID')
             ->setMaxLength(9999)
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
         yield AssociationField::new('bot', 'TG机器人');
         yield TextField::new('command', '命令名称');
         yield TextField::new('handler', '命令处理器类');
         yield TextField::new('description', '命令描述');
         yield BooleanField::new('valid', '有效');
         yield TextField::new('createdBy', '创建人')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
         yield TextField::new('updatedBy', '更新人')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
         yield DateTimeField::new('createTime', '创建时间')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
         yield DateTimeField::new('updateTime', '更新时间')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
     }
 
     public function configureActions(Actions $actions): Actions
     {
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, Action::DELETE]);
+        ;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -67,6 +78,7 @@ class BotCommandCrudController extends AbstractCrudController
             ->add('bot')
             ->add('command')
             ->add('valid')
-            ->add('createTime');
+            ->add('createTime')
+        ;
     }
 }

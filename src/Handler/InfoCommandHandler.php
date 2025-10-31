@@ -18,6 +18,9 @@ class InfoCommandHandler implements CommandHandlerInterface
     ) {
     }
 
+    /**
+     * @param array<int, string> $args
+     */
     public function handle(TelegramBot $bot, string $command, array $args, TelegramMessage $message): void
     {
         $commands = $this->commandRepository->getValidCommands($bot);

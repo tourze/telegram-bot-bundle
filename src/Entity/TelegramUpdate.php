@@ -4,12 +4,16 @@ namespace TelegramBotBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
 use TelegramBotBundle\Repository\TelegramUpdateRepository;
 use Tourze\Arrayable\PlainArrayInterface;
 use Tourze\DoctrineSnowflakeBundle\Traits\SnowflakeKeyAware;
 use Tourze\DoctrineTimestampBundle\Traits\CreateTimeAware;
 
+/**
+ * @implements PlainArrayInterface<string, mixed>
+ */
 #[ORM\Entity(repositoryClass: TelegramUpdateRepository::class)]
 #[ORM\Table(name: 'telegram_update', options: ['comment' => 'Telegram更新消息'])]
 #[ORM\Index(columns: ['bot_id', 'update_id'], name: 'telegram_update_bot_update')]
@@ -18,40 +22,46 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
     use SnowflakeKeyAware;
     use CreateTimeAware;
 
-    #[ORM\ManyToOne(targetEntity: TelegramBot::class)]
+    #[ORM\ManyToOne(targetEntity: TelegramBot::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'bot_id', referencedColumnName: 'id', nullable: false, options: ['comment' => 'TG机器人'])]
     private TelegramBot $bot;
 
-    #[ORM\Column(type: Types::BIGINT, options: ['comment' => 'Telegram更新ID'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 20)]
+    #[ORM\Column(name: 'update_id', type: Types::BIGINT, options: ['comment' => 'Telegram更新ID'])]
     private string $updateId;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: TelegramMessage::class)]
     private ?TelegramMessage $message = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: TelegramMessage::class)]
     private ?TelegramMessage $editedMessage = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: TelegramMessage::class)]
     private ?TelegramMessage $channelPost = null;
 
+    #[Assert\Valid]
     #[ORM\Embedded(class: TelegramMessage::class)]
     private ?TelegramMessage $editedChannelPost = null;
 
+    /**
+     * @var array<mixed>|null
+     */
+    #[Assert\Type(type: 'array')]
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['comment' => '原始数据'])]
     private ?array $rawData = null;
-
-
 
     public function getBot(): TelegramBot
     {
         return $this->bot;
     }
 
-    public function setBot(TelegramBot $bot): self
+    public function setBot(TelegramBot $bot): void
     {
         $this->bot = $bot;
-
-        return $this;
     }
 
     public function getUpdateId(): string
@@ -59,11 +69,9 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
         return $this->updateId;
     }
 
-    public function setUpdateId(string $updateId): self
+    public function setUpdateId(string $updateId): void
     {
         $this->updateId = $updateId;
-
-        return $this;
     }
 
     public function getMessage(): ?TelegramMessage
@@ -71,11 +79,9 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
         return $this->message;
     }
 
-    public function setMessage(?TelegramMessage $message): self
+    public function setMessage(?TelegramMessage $message): void
     {
         $this->message = $message;
-
-        return $this;
     }
 
     public function getEditedMessage(): ?TelegramMessage
@@ -83,11 +89,9 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
         return $this->editedMessage;
     }
 
-    public function setEditedMessage(?TelegramMessage $editedMessage): self
+    public function setEditedMessage(?TelegramMessage $editedMessage): void
     {
         $this->editedMessage = $editedMessage;
-
-        return $this;
     }
 
     public function getChannelPost(): ?TelegramMessage
@@ -95,11 +99,9 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
         return $this->channelPost;
     }
 
-    public function setChannelPost(?TelegramMessage $channelPost): self
+    public function setChannelPost(?TelegramMessage $channelPost): void
     {
         $this->channelPost = $channelPost;
-
-        return $this;
     }
 
     public function getEditedChannelPost(): ?TelegramMessage
@@ -107,31 +109,38 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
         return $this->editedChannelPost;
     }
 
-    public function setEditedChannelPost(?TelegramMessage $editedChannelPost): self
+    public function setEditedChannelPost(?TelegramMessage $editedChannelPost): void
     {
         $this->editedChannelPost = $editedChannelPost;
-
-        return $this;
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function getRawData(): ?array
     {
         return $this->rawData;
     }
 
-    public function setRawData(?array $rawData): self
+    /**
+     * @param array<mixed>|null $rawData
+     */
+    public function setRawData(?array $rawData): void
     {
         $this->rawData = $rawData;
-
-        return $this;
     }
 
-
+    /**
+     * @return array<string, mixed>
+     */
     public function retrievePlainArray(): array
     {
         return $this->toArray();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -145,7 +154,7 @@ class TelegramUpdate implements PlainArrayInterface, \Stringable
             'createTime' => $this->getCreateTime()?->format('Y-m-d H:i:s'),
         ];
     }
-    
+
     public function __toString(): string
     {
         return sprintf('TelegramUpdate #%s (Update ID: %s)', $this->id ?? 'new', $this->updateId ?? 'n/a');

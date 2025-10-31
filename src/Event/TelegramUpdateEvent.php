@@ -29,6 +29,9 @@ class TelegramUpdateEvent extends Event
         return $this->update;
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function getMessage(): ?array
     {
         return $this->update->getRawData()['message'] ?? null;
@@ -44,6 +47,9 @@ class TelegramUpdateEvent extends Event
         return $this->update->getMessage()?->getChat()?->getId();
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function getCallbackQuery(): ?array
     {
         return $this->update->getRawData()['callback_query'] ?? null;

@@ -6,8 +6,6 @@ services:
 
   TelegramBotBundle\Command\:
     resource: '../../Command/'
-  TelegramBotBundle\DataFixtures\:
-    resource: '../../DataFixtures/'
   TelegramBotBundle\Handler\:
     resource: '../../Handler/'
   TelegramBotBundle\Controller\:

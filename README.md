@@ -1,61 +1,180 @@
 # TelegramBotBundle
 
-这个 Bundle 提供了 Telegram 机器人的管理功能，包括:
+[![PHP Version Require](https://poser.pugx.org/tourze/telegram-bot-bundle/require/php)](https://packagist.org/packages/tourze/telegram-bot-bundle)
+[![License](https://poser.pugx.org/tourze/telegram-bot-bundle/license)](https://packagist.org/packages/tourze/telegram-bot-bundle)
+[![Latest Version](https://poser.pugx.org/tourze/telegram-bot-bundle/v)](https://packagist.org/packages/tourze/telegram-bot-bundle)
+[![Build Status](https://github.com/tourze/php-monorepo/workflows/CI/badge.svg)](https://github.com/tourze/php-monorepo/actions)
+[![Code Coverage](https://codecov.io/gh/tourze/php-monorepo/branch/master/graph/badge.svg)](https://codecov.io/gh/tourze/php-monorepo)
 
-- 机器人的添加、编辑和管理
-- Webhook 接收消息
-- 自动回复规则管理
-- 消息处理与发送
-- 命令处理系统
+[English](README.md) | [中文](README.zh-CN.md)
 
-## 使用
+A Symfony bundle for managing Telegram bots, providing comprehensive bot management capabilities including:
 
-1. 访问后台管理页面 `/admin/telegram-bot/bots` 添加机器人
-2. 使用命令设置 Webhook URL:
+- Bot creation, editing, and management
+- Webhook message reception
+- Auto-reply rule management
+- Message processing and sending
+- Command handling system
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Auto-Reply Rules](#auto-reply-rules)
+- [Command Handling](#command-handling)
+- [Event System](#event-system)
+- [API](#api)
+- [Advanced Usage](#advanced-usage)
+- [License](#license)
+
+## Features
+
+### 🤖 Bot Management
+- Create and manage multiple Telegram bots
+- Set up webhook URLs automatically
+- Bot validation and status tracking
+- Comprehensive bot configuration options
+
+### 📨 Message Processing
+- Receive and process webhook messages
+- Support for all Telegram message types
+- Message persistence and tracking
+- Real-time message handling
+
+### 🎯 Auto-Reply System
+- Rule-based automatic replies
+- Exact and fuzzy text matching
+- Priority-based rule processing
+- HTML-formatted response support
+
+### ⚡ Command System
+- Extensible command handling framework
+- Custom command handlers
+- Argument parsing and validation
+- Built-in system commands
+
+### 📊 Analytics & Logging
+- Command execution logging
+- Message tracking and statistics
+- User interaction analytics
+- System monitoring capabilities
+
+## Installation
+
+### Requirements
+
+- PHP 8.1 or higher  
+- ext-json
+- Symfony 7.3 or higher
+- Doctrine ORM 3.0+
+- Doctrine DBAL 4.0+
+- EasyAdmin Bundle 4+
+
+### Install via Composer
 
 ```bash
-# 设置单个机器人的 webhook
-bin/console telegram:set-webhook --bot-id=123
-
-# 使用自定义基础 URL
-bin/console telegram:set-webhook --bot-id=123 --base-url=https://custom-domain.com
+composer require tourze/telegram-bot-bundle
 ```
 
-## 自动回复规则
+### Core Dependencies
 
-- 支持精确匹配和模糊匹配
-- 可以设置优先级，优先级高的规则会优先匹配
-- 支持 HTML 格式的回复内容
+- `doctrine/orm`: ^3.0
+- `doctrine/dbal`: ^4.0  
+- `doctrine/doctrine-bundle`: ^2.13
+- `symfony/framework-bundle`: ^7.3
+- `symfony/http-client-contracts`: ^3.6
+- `easycorp/easyadmin-bundle`: ^4
+- Plus additional Tourze bundles for enhanced functionality
 
-## 命令处理
+## Quick Start
 
-Bundle 提供了一个命令处理系统，可以轻松添加新的命令处理器：
+### 1. Bundle Registration
 
-1. 创建一个命令处理器类：
+Register the bundle in your `config/bundles.php`:
 
 ```php
-use TelegramBotBundle\Event\TelegramCommandEvent;use TelegramBotBundle\Handler\AbstractCommandHandler;
+return [
+    // ... other bundles
+    TelegramBotBundle\TelegramBotBundle::class => ['all' => true],
+];
+```
 
-class YourCommandHandler extends AbstractCommandHandler
+### 2. Basic Configuration
+
+The bundle works out-of-the-box without additional configuration files. The webhook endpoint is automatically available at:
+
+```
+POST /telegram/webhook/{bot-id}
+```
+
+For advanced configuration, you can customize services in your `config/services.yaml` if needed.
+
+### 3. Usage
+
+1. Run database migrations to create required tables:
+```bash
+bin/console doctrine:migrations:migrate
+```
+
+2. Access the EasyAdmin interface to manage bots:
+    - Bots: `/admin?crudAction=index&crudControllerFqcn=TelegramBotBundle\Controller\Admin\TelegramBotCrudController`
+    - Auto-Reply Rules: `/admin?crudAction=index&crudControllerFqcn=TelegramBotBundle\Controller\Admin\AutoReplyRuleCrudController`
+    - Bot Commands: `/admin?crudAction=index&crudControllerFqcn=TelegramBotBundle\Controller\Admin\BotCommandCrudController`
+
+3. Set up webhook URLs using the console command:
+```bash
+# Set webhook for a bot
+bin/console telegram:set-webhook <bot-id> <base-url>
+
+# Example:
+bin/console telegram:set-webhook 123 https://your-domain.com
+# This generates: https://your-domain.com/telegram/webhook/123
+```
+
+## Auto-Reply Rules
+
+Create intelligent auto-reply rules through the admin interface:
+
+- **Exact Matching**: Messages must match the keyword exactly
+- **Fuzzy Matching**: Messages containing the keyword will trigger replies  
+- **Priority System**: Higher priority rules (larger numbers) are processed first
+- **HTML Support**: Reply content supports HTML formatting
+- **Per-Bot Rules**: Each bot can have its own set of rules
+
+## Command Handling
+
+The bundle provides a command handling system that allows easy addition of new command handlers:
+
+1. Create a command handler class:
+
+```php
+use TelegramBotBundle\Handler\CommandHandlerInterface;
+use TelegramBotBundle\Entity\TelegramBot;
+use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
+use TelegramBotBundle\Service\TelegramBotService;
+
+class YourCommandHandler implements CommandHandlerInterface
 {
-    protected function getCommand(): string
-    {
-        return 'yourcommand'; // 对应 /yourcommand
+    public function __construct(
+        private readonly TelegramBotService $botService,
+    ) {
     }
 
-    protected function handle(TelegramCommandEvent $event): void
+    public function handle(TelegramBot $bot, string $command, array $args, TelegramMessage $message): void
     {
-        $args = $event->getArgs(); // 获取命令参数
-        $this->reply($event, "你的回复消息");
+        // Handle your command logic here
+        $response = "Your reply message";
+        $this->botService->sendMessage($bot, (string) $message->getChat()?->getId(), $response);
     }
 }
 ```
 
-2. 命令处理器会自动注册并处理对应的命令
+2. Command handlers will be automatically registered and handle corresponding commands
 
-## 事件系统
+## Event System
 
-Bundle 使用事件系统来处理 Webhook 消息，你可以创建自己的 EventSubscriber 来处理消息:
+The bundle uses an event system to handle Webhook messages. You can create your own EventSubscriber to handle messages:
 
 ```php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -66,7 +185,7 @@ class YourSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            TelegramUpdateEvent::class => ['onTelegramUpdate', -10], // 优先级低于自动回复
+            TelegramUpdateEvent::class => ['onTelegramUpdate', -10], // lower priority than auto-reply
         ];
     }
 
@@ -75,22 +194,24 @@ class YourSubscriber implements EventSubscriberInterface
         $update = $event->getUpdate();
         $bot = $event->getBot();
 
-        // 处理消息...
+        // Handle message...
     }
 }
 ```
 
 ## API
 
-### 发送消息
+### Sending Messages
 
 ```php
 use TelegramBotBundle\Service\TelegramBotService;
+use TelegramBotBundle\Repository\TelegramBotRepository;
 
 class YourService
 {
     public function __construct(
         private readonly TelegramBotService $botService,
+        private readonly TelegramBotRepository $botRepository,
     ) {
     }
 
@@ -104,9 +225,148 @@ class YourService
 }
 ```
 
-## 参考文档
+## Advanced Usage
+
+### Database Schema
+
+The bundle creates several tables for managing bots and tracking activity:
+
+- `tg_bot`: Bot configuration (name, token, webhook URL)
+- `tg_auto_reply_rule`: Auto-reply rules with priority and matching options
+- `telegram_bot_command`: Custom command definitions
+- `telegram_update`: All received Telegram updates (with Snowflake IDs)
+- `command_log`: Command execution audit trail
+
+### Event-Driven Architecture
+
+Monitor bot activity by subscribing to events:
+
+### Custom Message Handlers
+
+Create sophisticated message processing by implementing custom handlers:
+
+```php
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use TelegramBotBundle\Event\TelegramUpdateEvent;
+use TelegramBotBundle\Event\TelegramCommandEvent;
+
+class CustomBotSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            TelegramUpdateEvent::class => ['onTelegramUpdate', -10],
+            TelegramCommandEvent::class => ['onTelegramCommand', 0],
+        ];
+    }
+
+    public function onTelegramUpdate(TelegramUpdateEvent $event): void
+    {
+        $update = $event->getUpdate();
+        $bot = $event->getBot();
+        
+        // Handle all types of updates (messages, edits, etc.)
+        if ($messageText = $event->getMessageText()) {
+            // Process text messages
+        }
+    }
+    
+    public function onTelegramCommand(TelegramCommandEvent $event): void
+    {
+        $command = $event->getCommand();
+        $args = $event->getArgs();
+        
+        // Handle specific command executions
+    }
+}
+```
+
+### Custom Command Handlers
+
+Implement the `CommandHandlerInterface` to create custom commands:
+
+```php
+use TelegramBotBundle\Handler\CommandHandlerInterface;
+use TelegramBotBundle\Entity\TelegramBot;
+use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
+use TelegramBotBundle\Service\TelegramBotService;
+
+class WeatherCommandHandler implements CommandHandlerInterface
+{
+    public function __construct(
+        private readonly TelegramBotService $botService,
+    ) {
+    }
+
+    public function handle(TelegramBot $bot, string $command, array $args, TelegramMessage $message): void
+    {
+        $location = $args[0] ?? 'Unknown';
+        $chatId = (string) $message->getChat()?->getId();
+        
+        $weatherInfo = $this->fetchWeatherData($location);
+        $this->botService->sendMessage($bot, $chatId, $weatherInfo);
+    }
+    
+    private function fetchWeatherData(string $location): string
+    {
+        // Implement your weather API integration
+        return "Weather in {$location}: Sunny, 24°C";
+    }
+}
+```
+
+Register your handler in the admin interface by creating a `BotCommand` entry with your handler's FQCN.
+
+## Contributing
+
+We welcome contributions to improve this bundle! Please:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and add tests
+4. Ensure all tests pass (`./vendor/bin/phpunit packages/telegram-bot-bundle/tests`)
+5. Run static analysis (`php -d memory_limit=2G ./vendor/bin/phpstan analyse packages/telegram-bot-bundle`)
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
+
+### Development Setup
+
+```bash
+# Run tests
+./vendor/bin/phpunit packages/telegram-bot-bundle/tests
+
+# Run static analysis  
+php -d memory_limit=2G ./vendor/bin/phpstan analyse packages/telegram-bot-bundle
+
+# Check package integrity
+bin/console app:check-packages telegram-bot-bundle -o -f
+```
+
+## Changelog
+
+### Latest Changes
+- Enhanced test coverage with comprehensive integration tests
+- Improved PHPStan compliance and type safety
+- Added support for all Telegram message types
+- Implemented robust command parsing and logging
+- Enhanced EasyAdmin integration for better management
+
+### Version History
+- **v0.1.x**: Core bot management and webhook handling
+- **v0.2.x**: Auto-reply system and command framework  
+- **v0.3.x**: Enhanced logging and event system
+- **Current**: Full-featured bot development platform
+
+## License
+
+This bundle is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Reference Documentation
 
 - [Telegram Bot API](https://core.telegram.org/bots/api)
-- [Getting updates](https://core.telegram.org/bots/api#getting-updates)
+- [Getting updates](https://core.telegram.org/bots/api#getting-updates)  
 - [Available types](https://core.telegram.org/bots/api#available-types)
 - [Available methods](https://core.telegram.org/bots/api#available-methods)
+- [EasyAdmin Documentation](https://symfony.com/doc/current/bundles/EasyAdminBundle/index.html)
+

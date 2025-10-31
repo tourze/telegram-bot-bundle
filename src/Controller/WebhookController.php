@@ -3,6 +3,7 @@
 namespace TelegramBotBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,7 +24,8 @@ use TelegramBotBundle\Service\CommandParserService;
  *
  * 参考文档: https://core.telegram.org/bots/api#getting-updates
  */
-class WebhookController extends AbstractController
+#[WithMonologChannel(channel: 'telegram_bot')]
+final class WebhookController extends AbstractController
 {
     public function __construct(
         private readonly TelegramBotRepository $botRepository,
@@ -60,9 +62,9 @@ class WebhookController extends AbstractController
 
         // 创建更新记录
         $update = new TelegramUpdate();
-        $update->setBot($bot)
-            ->setUpdateId((string) $rawUpdate['update_id'])
-            ->setRawData($rawUpdate);
+        $update->setBot($bot);
+        $update->setUpdateId((string) $rawUpdate['update_id']);
+        $update->setRawData($rawUpdate);
 
         // 处理消息
         if (isset($rawUpdate['message'])) {
@@ -100,32 +102,35 @@ class WebhookController extends AbstractController
         return new Response('OK');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function createMessage(array $data): TelegramMessage
     {
         $message = new TelegramMessage();
-        $message->setMessageId($data['message_id'] ?? null)
-            ->setDate($data['date'] ?? null)
-            ->setText($data['text'] ?? null);
+        $message->setMessageId($data['message_id'] ?? null);
+        $message->setDate($data['date'] ?? null);
+        $message->setText($data['text'] ?? null);
 
         if (isset($data['from'])) {
             $from = new TelegramUser();
-            $from->setId($data['from']['id'] ?? null)
-                ->setIsBot($data['from']['is_bot'] ?? null)
-                ->setFirstName($data['from']['first_name'] ?? null)
-                ->setLastName($data['from']['last_name'] ?? null)
-                ->setUsername($data['from']['username'] ?? null)
-                ->setLanguageCode($data['from']['language_code'] ?? null);
+            $from->setId($data['from']['id'] ?? null);
+            $from->setIsBot($data['from']['is_bot'] ?? null);
+            $from->setFirstName($data['from']['first_name'] ?? null);
+            $from->setLastName($data['from']['last_name'] ?? null);
+            $from->setUsername($data['from']['username'] ?? null);
+            $from->setLanguageCode($data['from']['language_code'] ?? null);
             $message->setFrom($from);
         }
 
         if (isset($data['chat'])) {
             $chat = new TelegramChat();
-            $chat->setId($data['chat']['id'] ?? null)
-                ->setType($data['chat']['type'] ?? null)
-                ->setTitle($data['chat']['title'] ?? null)
-                ->setUsername($data['chat']['username'] ?? null)
-                ->setFirstName($data['chat']['first_name'] ?? null)
-                ->setLastName($data['chat']['last_name'] ?? null);
+            $chat->setId($data['chat']['id'] ?? null);
+            $chat->setType($data['chat']['type'] ?? null);
+            $chat->setTitle($data['chat']['title'] ?? null);
+            $chat->setUsername($data['chat']['username'] ?? null);
+            $chat->setFirstName($data['chat']['first_name'] ?? null);
+            $chat->setLastName($data['chat']['last_name'] ?? null);
             $message->setChat($chat);
         }
 

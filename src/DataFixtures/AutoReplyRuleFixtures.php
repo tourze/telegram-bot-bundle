@@ -5,12 +5,14 @@ namespace TelegramBotBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use TelegramBotBundle\Entity\AutoReplyRule;
 use TelegramBotBundle\Entity\TelegramBot;
 
 /**
  * Telegram自动回复规则数据填充
  */
+#[When(env: 'test')]
 class AutoReplyRuleFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void

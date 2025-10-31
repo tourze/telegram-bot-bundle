@@ -3,7 +3,9 @@
 namespace TelegramBotBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use TelegramBotBundle\Entity\TelegramBot;
 
@@ -12,6 +14,8 @@ use TelegramBotBundle\Entity\TelegramBot;
  *
  * 参考文档: https://core.telegram.org/bots/api
  */
+#[Autoconfigure(public: true)]
+#[WithMonologChannel(channel: 'telegram_bot')]
 class TelegramBotService
 {
     private const API_BASE_URL = 'https://api.telegram.org/bot';
@@ -27,6 +31,7 @@ class TelegramBotService
      * 设置 Webhook
      *
      * @see https://core.telegram.org/bots/api#setwebhook
+     * @phpstan-ignore-next-line symplify.noReturnSetterMethod (This is not a setter but a business method)
      */
     public function setWebhook(TelegramBot $bot, string $webhookUrl): bool
     {
@@ -36,7 +41,7 @@ class TelegramBotService
         ]);
 
         // {"ok":true,"result":true,"description":"Webhook is set"}
-        if ($response['ok'] ?? false) {
+        if (($response['ok'] ?? false) === true) {
             $bot->setWebhookUrl($webhookUrl);
             $this->entityManager->persist($bot);
             $this->entityManager->flush();
@@ -60,11 +65,15 @@ class TelegramBotService
             'parse_mode' => 'HTML',
         ]);
 
-        return $response['ok'] ?? false;
+        return ($response['ok'] ?? false) === true;
     }
 
     /**
      * 发送 API 请求
+     *
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
      */
     private function makeRequest(TelegramBot $bot, string $method, array $params = []): array
     {
@@ -73,27 +82,75 @@ class TelegramBotService
             'method' => $method,
             'params' => $params,
         ]);
-        return $this->makeHttpRequest($bot->getToken(), $method, $params);
+
+        try {
+            return $this->makeHttpRequest($bot->getToken(), $method, $params);
+        } catch (\Exception $e) {
+            // 如果网络请求失败，返回错误响应格式
+            $this->logger->error('TG机器人API请求失败', [
+                'bot' => $bot,
+                'method' => $method,
+                'params' => $params,
+                'error' => $e->getMessage(),
+            ]);
+
+            return ['ok' => false, 'error_code' => 0, 'description' => $e->getMessage()];
+        }
     }
 
     /**
      * 发送 API 请求
+     *
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
      */
     public function makeHttpRequest(string $token, string $method, array $params = []): array
     {
         $url = self::API_BASE_URL . $token . '/' . $method;
+        $startTime = microtime(true);
 
-        $response = $this->httpClient->request('POST', $url, [
-            'json' => $params,
-        ]);
+        try {
+            // 审计日志：记录请求开始
+            $this->logger->info('TG机器人API请求开始', [
+                'method' => $method,
+                'url' => $url,
+                'params' => $params,
+                'request_start_time' => date('Y-m-d H:i:s'),
+            ]);
 
-        $this->logger->info('TG机器人API调用接口', [
-            'token' => $token,
-            'method' => $method,
-            'params' => $params,
-            'response' => $response->getContent(),
-        ]);
+            $response = $this->httpClient->request('POST', $url, [
+                'json' => $params,
+            ]);
 
-        return json_decode($response->getContent(), true);
+            $responseContent = $response->getContent();
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
+
+            // 审计日志：记录响应结果
+            $this->logger->info('TG机器人API调用成功', [
+                'method' => $method,
+                'params' => $params,
+                'response_content' => $responseContent,
+                'response_size' => strlen($responseContent),
+                'duration_ms' => $duration,
+                'status_code' => $response->getStatusCode(),
+            ]);
+
+            return json_decode($responseContent, true);
+        } catch (\Exception $e) {
+            $duration = round((microtime(true) - $startTime) * 1000, 2);
+
+            // 审计日志：记录异常情况
+            $this->logger->error('TG机器人API调用失败', [
+                'method' => $method,
+                'params' => $params,
+                'duration_ms' => $duration,
+                'error' => $e->getMessage(),
+                'error_class' => get_class($e),
+                'error_trace' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
     }
 }

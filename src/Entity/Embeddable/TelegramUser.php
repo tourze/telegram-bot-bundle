@@ -6,6 +6,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Tourze\Arrayable\PlainArrayInterface;
 
+/**
+ * @implements PlainArrayInterface<string, mixed>
+ */
 #[ORM\Embeddable]
 class TelegramUser implements PlainArrayInterface
 {
@@ -32,11 +35,9 @@ class TelegramUser implements PlainArrayInterface
         return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setId(?int $id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
     public function getIsBot(): ?bool
@@ -44,11 +45,9 @@ class TelegramUser implements PlainArrayInterface
         return $this->isBot;
     }
 
-    public function setIsBot(?bool $isBot): self
+    public function setIsBot(?bool $isBot): void
     {
         $this->isBot = $isBot;
-
-        return $this;
     }
 
     public function getFirstName(): ?string
@@ -56,11 +55,9 @@ class TelegramUser implements PlainArrayInterface
         return $this->firstName;
     }
 
-    public function setFirstName(?string $firstName): self
+    public function setFirstName(?string $firstName): void
     {
         $this->firstName = $firstName;
-
-        return $this;
     }
 
     public function getLastName(): ?string
@@ -68,11 +65,9 @@ class TelegramUser implements PlainArrayInterface
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): self
+    public function setLastName(?string $lastName): void
     {
         $this->lastName = $lastName;
-
-        return $this;
     }
 
     public function getUsername(): ?string
@@ -80,11 +75,9 @@ class TelegramUser implements PlainArrayInterface
         return $this->username;
     }
 
-    public function setUsername(?string $username): self
+    public function setUsername(?string $username): void
     {
         $this->username = $username;
-
-        return $this;
     }
 
     public function getLanguageCode(): ?string
@@ -92,18 +85,22 @@ class TelegramUser implements PlainArrayInterface
         return $this->languageCode;
     }
 
-    public function setLanguageCode(?string $languageCode): self
+    public function setLanguageCode(?string $languageCode): void
     {
         $this->languageCode = $languageCode;
-
-        return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function retrievePlainArray(): array
     {
         return $this->toArray();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [

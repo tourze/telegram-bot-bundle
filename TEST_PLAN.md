@@ -54,7 +54,7 @@
 ### 🔔 EventSubscribers (事件订阅者)
 | 文件 | 测试场景 | 状态 | 测试通过 |
 |-----|----------|------|----------|
-| `EventSubscriber/AutoReplySubscriber.php` | 🔄 自动回复匹配、消息发送 | 🔄 待完善 | ❓ 待测试 |
+| `EventSubscriber/AutoReplyEventSubscriber.php` | 🔄 自动回复匹配、消息发送 | 🔄 待完善 | ❓ 待测试 |
 
 ### 🛠️ Handlers (处理器)
 | 文件 | 测试场景 | 状态 | 测试通过 |

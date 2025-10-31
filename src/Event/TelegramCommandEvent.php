@@ -11,6 +11,9 @@ use TelegramBotBundle\Entity\TelegramBot;
  */
 class TelegramCommandEvent extends Event
 {
+    /**
+     * @param array<mixed> $args
+     */
     public function __construct(
         private readonly TelegramBot $bot,
         private readonly string $command,
@@ -29,6 +32,9 @@ class TelegramCommandEvent extends Event
         return $this->command;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getArgs(): array
     {
         return $this->args;

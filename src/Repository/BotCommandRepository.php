@@ -6,15 +6,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use TelegramBotBundle\Entity\BotCommand;
 use TelegramBotBundle\Entity\TelegramBot;
+use Tourze\PHPUnitSymfonyKernelTest\Attribute\AsRepository;
 
 /**
  * @extends ServiceEntityRepository<BotCommand>
- *
- * @method BotCommand|null find($id, $lockMode = null, $lockVersion = null)
- * @method BotCommand|null findOneBy(array $criteria, array $orderBy = null)
- * @method BotCommand[]    findAll()
- * @method BotCommand[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
+#[AsRepository(entityClass: BotCommand::class)]
 class BotCommandRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -35,7 +32,8 @@ class BotCommandRepository extends ServiceEntityRepository
             ->setParameter('bot', $bot)
             ->orderBy('c.command', 'ASC')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 
     /**
@@ -48,5 +46,21 @@ class BotCommandRepository extends ServiceEntityRepository
             'command' => $command,
             'valid' => true,
         ]);
+    }
+
+    public function save(BotCommand $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->persist($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(BotCommand $entity, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($entity);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }

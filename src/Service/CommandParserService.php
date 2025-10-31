@@ -2,12 +2,14 @@
 
 namespace TelegramBotBundle\Service;
 
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use TelegramBotBundle\Entity\CommandLog;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
 use TelegramBotBundle\Entity\TelegramBot;
+use TelegramBotBundle\Exception\InvalidCommandHandlerException;
 use TelegramBotBundle\Handler\CommandHandlerInterface;
 use TelegramBotBundle\Handler\InfoCommandHandler;
 use TelegramBotBundle\Repository\BotCommandRepository;
@@ -16,6 +18,7 @@ use Tourze\DoctrineAsyncInsertBundle\Service\AsyncInsertService as DoctrineServi
 /**
  * 命令解析服务
  */
+#[WithMonologChannel(channel: 'telegram_bot')]
 class CommandParserService
 {
     /**
@@ -69,7 +72,9 @@ class CommandParserService
             $this->logCommand($bot, $commandText, $args, $message, true);
 
             $handler = $this->container->get(self::SYSTEM_COMMANDS[$commandText]['handler']);
-            /* @var CommandHandlerInterface $handler */
+            if (!$handler instanceof CommandHandlerInterface) {
+                throw new InvalidCommandHandlerException(sprintf('Handler %s must implement %s', $handler::class, CommandHandlerInterface::class));
+            }
             $handler->handle($bot, $commandText, $args, $message);
 
             return;
@@ -98,31 +103,35 @@ class CommandParserService
 
         // 使用配置的handler处理命令
         $handler = $this->container->get($command->getHandler());
-        /* @var CommandHandlerInterface $handler */
+        if (!$handler instanceof CommandHandlerInterface) {
+            throw new InvalidCommandHandlerException(sprintf('Handler %s must implement %s', $handler::class, CommandHandlerInterface::class));
+        }
         $handler->handle($bot, $command->getCommand(), $args, $message);
     }
 
     /**
      * 记录命令执行日志
+     *
+     * @param array<mixed> $args
      */
     private function logCommand(TelegramBot $bot, string $command, array $args, TelegramMessage $message, bool $isSystem): void
     {
         $log = new CommandLog();
-        $log->setBot($bot)
-            ->setCommand($command)
-            ->setArgs($args)
-            ->setIsSystem($isSystem);
+        $log->setBot($bot);
+        $log->setCommand($command);
+        $log->setArgs($args);
+        $log->setIsSystem($isSystem);
 
         $from = $message->getFrom();
         if (null !== $from) {
-            $log->setUserId($from->getId())
-                ->setUsername($from->getUsername());
+            $log->setUserId($from->getId());
+            $log->setUsername($from->getUsername());
         }
 
         $chat = $message->getChat();
         if (null !== $chat) {
-            $log->setChatId($chat->getId())
-                ->setChatType($chat->getType());
+            $log->setChatId($chat->getId());
+            $log->setChatType($chat->getType());
         }
 
         $this->doctrineService->asyncInsert($log);

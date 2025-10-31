@@ -5,6 +5,7 @@ namespace TelegramBotBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use TelegramBotBundle\Entity\Embeddable\TelegramChat;
 use TelegramBotBundle\Entity\Embeddable\TelegramMessage;
 use TelegramBotBundle\Entity\Embeddable\TelegramUser;
@@ -14,6 +15,7 @@ use TelegramBotBundle\Entity\TelegramUpdate;
 /**
  * Telegram更新消息数据填充
  */
+#[When(env: 'test')]
 class TelegramUpdateFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void

@@ -1,28 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TelegramBotBundle\Tests;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use TelegramBotBundle\TelegramBotBundle;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractBundleTestCase;
 
-class TelegramBotBundleTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(TelegramBotBundle::class)]
+#[RunTestsInSeparateProcesses]
+final class TelegramBotBundleTest extends AbstractBundleTestCase
 {
-    public function testBundleClassImplementsBundleInterface(): void
-    {
-        $bundle = new TelegramBotBundle();
-        $this->assertInstanceOf(BundleInterface::class, $bundle);
-    }
-
-    public function testBuildContainer(): void
-    {
-        $bundle = new TelegramBotBundle();
-        $container = new ContainerBuilder();
-
-        // 没有实现特殊的build方法，但调用不应抛出异常
-        $bundle->build($container);
-
-        $this->assertTrue(true);
-    }
 }
