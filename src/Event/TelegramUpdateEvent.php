@@ -34,7 +34,10 @@ class TelegramUpdateEvent extends Event
      */
     public function getMessage(): ?array
     {
-        return $this->update->getRawData()['message'] ?? null;
+        $rawData = $this->update->getRawData();
+        $message = $rawData['message'] ?? null;
+
+        return is_array($message) ? $message : null;
     }
 
     public function getMessageText(): ?string
@@ -52,6 +55,9 @@ class TelegramUpdateEvent extends Event
      */
     public function getCallbackQuery(): ?array
     {
-        return $this->update->getRawData()['callback_query'] ?? null;
+        $rawData = $this->update->getRawData();
+        $callbackQuery = $rawData['callback_query'] ?? null;
+
+        return is_array($callbackQuery) ? $callbackQuery : null;
     }
 }

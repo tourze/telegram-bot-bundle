@@ -615,7 +615,9 @@ final class TelegramUpdateRepositoryTest extends AbstractRepositoryTestCase
             ->getResult()
         ;
 
+        $this->assertIsArray($updatesWithBot);
         $this->assertCount(1, $updatesWithBot);
+        $this->assertArrayHasKey(0, $updatesWithBot);
         $this->assertSame($update, $updatesWithBot[0]);
     }
 
@@ -771,21 +773,30 @@ final class TelegramUpdateRepositoryTest extends AbstractRepositoryTestCase
         $this->assertNotNull($foundMessage);
         $rawData = $foundMessage->getRawData();
         $this->assertNotNull($rawData);
+        $this->assertIsArray($rawData);
         $this->assertArrayHasKey('message', $rawData);
+        $this->assertIsArray($rawData['message']);
+        $this->assertArrayHasKey('text', $rawData['message']);
         $this->assertSame('测试消息', $rawData['message']['text']);
 
         $foundCallback = $repository->findByBotAndUpdateId($bot, '9000000000000000501');
         $this->assertNotNull($foundCallback);
         $rawData = $foundCallback->getRawData();
         $this->assertNotNull($rawData);
+        $this->assertIsArray($rawData);
         $this->assertArrayHasKey('callback_query', $rawData);
+        $this->assertIsArray($rawData['callback_query']);
+        $this->assertArrayHasKey('data', $rawData['callback_query']);
         $this->assertSame('button_clicked', $rawData['callback_query']['data']);
 
         $foundInline = $repository->findByBotAndUpdateId($bot, '9000000000000000502');
         $this->assertNotNull($foundInline);
         $rawData = $foundInline->getRawData();
         $this->assertNotNull($rawData);
+        $this->assertIsArray($rawData);
         $this->assertArrayHasKey('inline_query', $rawData);
+        $this->assertIsArray($rawData['inline_query']);
+        $this->assertArrayHasKey('query', $rawData['inline_query']);
         $this->assertSame('搜索关键词', $rawData['inline_query']['query']);
 
         // 测试总数统计
@@ -1015,6 +1026,8 @@ final class TelegramUpdateRepositoryTest extends AbstractRepositoryTestCase
         $this->assertNotNull($rawData);
         $this->assertIsArray($rawData);
         $this->assertArrayHasKey('message', $rawData);
+        $this->assertIsArray($rawData['message']);
+        $this->assertArrayHasKey('text', $rawData['message']);
         $this->assertSame('排序测试消息2', $rawData['message']['text']);
 
         // 测试特殊的查询方法

@@ -26,7 +26,8 @@ class BotCommandRepository extends ServiceEntityRepository
      */
     public function getValidCommands(TelegramBot $bot): array
     {
-        return $this->createQueryBuilder('c')
+        /** @var BotCommand[] $result */
+        $result = $this->createQueryBuilder('c')
             ->where('c.bot = :bot')
             ->andWhere('c.valid = true')
             ->setParameter('bot', $bot)
@@ -34,6 +35,8 @@ class BotCommandRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+
+        return $result;
     }
 
     /**

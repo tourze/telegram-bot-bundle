@@ -33,7 +33,10 @@ class AutoReplyRuleRepository extends ServiceEntityRepository
             ->addOrderBy('r.id', 'ASC')
         ;
 
-        return $qb->getQuery()->getResult();
+        /** @var AutoReplyRule[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 
     public function save(AutoReplyRule $entity, bool $flush = true): void

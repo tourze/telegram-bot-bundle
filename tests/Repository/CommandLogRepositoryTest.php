@@ -510,7 +510,9 @@ final class CommandLogRepositoryTest extends AbstractRepositoryTestCase
             ->getResult()
         ;
 
+        $this->assertIsArray($logsWithBot);
         $this->assertCount(1, $logsWithBot);
+        $this->assertArrayHasKey(0, $logsWithBot);
         $this->assertSame($log, $logsWithBot[0]);
     }
 

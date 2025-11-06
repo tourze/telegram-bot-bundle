@@ -136,7 +136,10 @@ class TelegramBotService
                 'status_code' => $response->getStatusCode(),
             ]);
 
-            return json_decode($responseContent, true);
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode($responseContent, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decoded;
         } catch (\Exception $e) {
             $duration = round((microtime(true) - $startTime) * 1000, 2);
 

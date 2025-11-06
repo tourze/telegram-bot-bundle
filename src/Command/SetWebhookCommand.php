@@ -51,6 +51,9 @@ class SetWebhookCommand extends Command
             return Command::FAILURE;
         }
 
+        // 确保 baseUrl 是字符串类型
+        assert(is_string($baseUrl));
+
         $bot = $this->botRepository->find($botId);
         if (null === $bot) {
             $io->error('Bot not found');

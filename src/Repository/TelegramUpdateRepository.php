@@ -34,7 +34,8 @@ class TelegramUpdateRepository extends ServiceEntityRepository
      */
     public function getListByBot(TelegramBot $bot, int $page = 1, int $limit = 20): array
     {
-        return $this->createQueryBuilder('t')
+        /** @var TelegramUpdate[] $result */
+        $result = $this->createQueryBuilder('t')
             ->where('t.bot = :bot')
             ->setParameter('bot', $bot)
             ->orderBy('t.updateId', 'DESC')
@@ -43,6 +44,7 @@ class TelegramUpdateRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+        return $result;
     }
 
     /**
@@ -58,7 +60,8 @@ class TelegramUpdateRepository extends ServiceEntityRepository
      */
     public function getLastUpdateByBot(TelegramBot $bot): ?TelegramUpdate
     {
-        return $this->createQueryBuilder('t')
+        /** @var TelegramUpdate|null $result */
+        $result = $this->createQueryBuilder('t')
             ->where('t.bot = :bot')
             ->setParameter('bot', $bot)
             ->orderBy('t.updateId', 'DESC')
@@ -66,6 +69,7 @@ class TelegramUpdateRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+        return $result;
     }
 
     public function save(TelegramUpdate $entity, bool $flush = true): void

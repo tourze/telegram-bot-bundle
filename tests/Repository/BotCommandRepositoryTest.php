@@ -607,7 +607,9 @@ final class BotCommandRepositoryTest extends AbstractRepositoryTestCase
             ->getResult()
         ;
 
+        $this->assertIsArray($commandsWithBot);
         $this->assertCount(1, $commandsWithBot);
+        $this->assertArrayHasKey(0, $commandsWithBot);
         $this->assertSame($command, $commandsWithBot[0]);
     }
 

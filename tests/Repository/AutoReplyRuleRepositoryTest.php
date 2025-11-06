@@ -529,7 +529,9 @@ final class AutoReplyRuleRepositoryTest extends AbstractRepositoryTestCase
             ->getResult()
         ;
 
+        $this->assertIsArray($rulesWithBot);
         $this->assertCount(1, $rulesWithBot);
+        $this->assertArrayHasKey(0, $rulesWithBot);
         $this->assertSame($rule, $rulesWithBot[0]);
     }
 
