@@ -31,7 +31,6 @@ class TelegramBotService
      * 设置 Webhook
      *
      * @see https://core.telegram.org/bots/api#setwebhook
-     * @phpstan-ignore-next-line symplify.noReturnSetterMethod (This is not a setter but a business method)
      */
     public function setWebhook(TelegramBot $bot, string $webhookUrl): bool
     {
