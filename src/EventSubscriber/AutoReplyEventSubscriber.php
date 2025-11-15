@@ -11,11 +11,11 @@ use TelegramBotBundle\Service\TelegramBotService;
 /**
  * 处理 Telegram Bot 的自动回复
  */
-class AutoReplyEventSubscriber implements EventSubscriberInterface
+readonly class AutoReplyEventSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly AutoReplyRuleRepository $ruleRepository,
-        private readonly TelegramBotService $botService,
+        private AutoReplyRuleRepository $ruleRepository,
+        private TelegramBotService $botService,
     ) {
     }
 
