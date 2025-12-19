@@ -4,7 +4,7 @@ namespace TelegramBotBundle\DependencyInjection;
 
 use Tourze\SymfonyDependencyServiceLoader\AutoExtension;
 
-class TelegramBotExtension extends AutoExtension
+final class TelegramBotExtension extends AutoExtension
 {
     protected function getConfigDir(): string
     {
